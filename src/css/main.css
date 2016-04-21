@@ -1,0 +1,121 @@
+#whole {
+    margin-top: 20px;
+}
+
+.fa-circle-o {
+    line-height: 100px !important;
+}
+
+body {
+    background: url('../mission.jpg');
+    background-size: 100% 120%;
+    background-repeat: no-repeat;
+
+}
+
+h2 {
+    line-height: 100px;
+}
+
+
+
+.space {
+    width: 100%;
+    height: 100px;
+}
+
+.bigSpace {
+    width: 100%;
+    height: 400px;
+}
+
+h3, h2, h1 {
+    font-family: 'Righteous', cursive;
+}
+
+.hover {
+    color:white;
+    -webkit-transition: background 0.5s linear;
+    -moz-transition: background 0.5s linear;
+    -ms-transition: background 0.5s linear;
+    -o-transition: background 0.5s linear;
+    transition: background 0.5s linear;
+}
+
+.hover:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+    color:#fff;
+}
+
+
+
+.white {
+    color: white;
+    text-shadow: 1px 1px 1px white;
+    font-size: 1.5em;
+    visibility: hidden;
+}
+
+#whole {
+    margin:0 auto;
+    width: 500px;
+    height:200px;
+}
+
+
+
+.text-md-center {
+    padding: 1px 1px 1px 1px;
+}
+
+.square{
+    width:100px;
+    height:100px;
+    margin-left: auto ;
+    margin-right: auto ;
+}
+
+.topsquare{
+    color: white;
+    width:100px;
+    height:100px;
+    margin-left: auto ;
+    margin-right: auto ;
+}
+
+.click {
+    cursor: pointer;
+}
+
+.vtop{
+    border-left: 2px solid white;
+    border-right:2px solid white;
+    -webkit-border-image:
+            -webkit-gradient(linear, 0 0, 0 100%, from(rgba(0, 0, 0, 0)), to(white)) 1 100%;
+}
+
+.vbottom{
+    border-left:2px solid white;
+    border-right:2px solid white;
+    -webkit-border-image:
+            -webkit-gradient(linear, 0 0, 0 100%, from(white), to(rgba(0, 0, 0, 0))) 1 100%;
+}
+
+.center{
+    border: 2px solid white;
+}
+
+.hleft {
+    border-top: 2px solid white;
+    border-bottom: 2px solid white;
+    -webkit-border-top-image:
+            -webkit-gradient(linear, 0 0, 0 100%, from(white), to(rgba(0, 0, 0, 0))) 1 100%;
+}
+
+.hright{
+    border-top:2px solid white;
+    border-bottom:2px solid white;
+    -webkit-border-bottom-image:
+            -webkit-gradient(linear, 0 0, 0 100%, from(white), to(rgba(0, 0, 0, 0))) 1 100%;
+}
+

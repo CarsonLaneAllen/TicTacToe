@@ -19,18 +19,25 @@ var turn;
 var letter, klass;
 var all;
 
+$(init);
+
+function init() {
+    for (i = 1; i < 4; i++) {
+        for (j = 1; j < 4; j++) {
+            var spaceClass = (i + "-" + j);
+            var jqueryArray = ($('#' + spaceClass));
+            grid[(i)].push(jqueryArray);
+        }
+    }
+}
 
 // When 'Begin' is clicked, set turn to true or false, then activate the corresponding funci
 
 var startGame = function () {
 
-    turn = Math.random() < 0.5 ? false : true;
+    turn = Math.random() < 0.5;
 
-    if (!turn) {
-        switchTurn('X', "fa fa-5x fa-times", xDiv);
-    } else if (turn) {
-        switchTurn('O', "fa fa-5x fa-circle-o", oDiv);
-    }
+    switchTurn();
 
     $('.fa').attr('class', '');
 
@@ -43,34 +50,51 @@ var startGame = function () {
     $('.square').child().fadeIn('slow');
 };
 
-function switchTurn(l, cLass, div) {
-    div.fadeToggle('slow');
-    letter = l;
-    klass = cLass;
+function switchTurn() {
+    getDiv().fadeToggle('slow');
+    letter = getSymbol();
+    klass = getIconClass();
     turn = !turn;
+}
+
+function getSymbol() {
+    return turn ? "O" : "X"
+}
+
+function getIconClass() {
+    return turn ? "fa fa-5x fa-circle-o" : "fa fa-5x fa-times"
+}
+
+function getDiv() {
+    return turn ? oDiv : xDiv
 }
 
 function clickHandler() {
 
     $('.square').click(function () {
 
-        if ($(this).data('value') === "") {
+        if (!isEmpty(this)) return;
 
-            $(this).child().attr('class', klass);
-            $(this).data('value', letter);
-            if(horWin() || vertWin() || diags()) {
-                return
-            };
+        storeMove(this);
+        console.log(getWin());
 
-            if (!turn) {
-                switchTurn('X', "fa fa-5x fa-times", xDiv);
-                oDiv.fadeToggle('slow')
-            } else if (turn) {
-                switchTurn('O', "fa fa-5x fa-circle-o", oDiv);
-                xDiv.fadeToggle('slow')
-            }
-        }
+        if (!getWin()) switchTurn();
+        else (gameWin(getWin().join()))
+
     })
+}
+
+function isEmpty(square) {
+    return $(square).data('value') === "";
+}
+
+function storeMove(square) {
+    $(square).child().attr('class', klass);
+    $(square).data('value', letter)
+}
+
+function getWin() {
+    return horWin() || vertWin() || diags()
 }
 
 // Reset the board
@@ -89,97 +113,66 @@ function reset() {
 // Create a function that checks for a win
 
 
-for (i = 1; i < 4; i++) {
-    for (j = 1; j < 4; j++) {
-        var spaceClass = (i + "-" + j);
-        var jqueryArray = ($('#' + spaceClass));
-        grid[(i)].push(jqueryArray);
-    }
-}
-
 function inARow(one, two, three) {
-    var won = one.data('value');
-    var too = two.data('value');
-    var tree = three.data('value');
+    var winDivs = [one.data('value'), two.data('value'), three.data('value')];
+    var sequence = winDivs.join();
+    var threeX = sequence === 'XXX';
+    var threeO = sequence === 'OOO';
 
-    all = won + too + tree;
-
-    switch(all) {
-        case 'XXX':
-            return gameWin();
-        case 'OOO':
-            return gameWin();
-    }
-
-    function gameWin() {
-        $('.fa').fadeOut('slow');
-        function fadeOne() {
-            one.find('.fa').fadeIn('slow');
-        }
-
-        function fadeTwo() {
-            two.find('.fa').fadeIn('slow')
-        }
-
-        function fadeThree() {
-            three.find('.fa').fadeIn('slow')
-        }
-
-        winner(one);
-        setTimeout(fadeOne, 200);
-        setTimeout(fadeTwo, 800);
-        setTimeout(fadeThree, 1200);
-        function fadeAll() {
-            $('.fa').fadeIn('slow');
-        }
-
-        setTimeout(fadeAll, 2000);
-
-        $('.square').unbind('click');
-        return true;
-    }
-
-    // First iteration of a check for a win:
-
-
-//    if (won === two.data('value')) {
-//        if (two.data('value') === three.data('value') && won === three.data('value')) {
-//            if (won !== "") {
-//
-//            }
-//        }
-//    }
-    
+    if (threeX) return winDivs;
+    else if (threeO) return winDivs.reverse();
+    else return false
 }
 
-function winner(a) {
-    $('.targetX').fadeOut('fast');
-    $('.targetO').fadeOut('fast');
+function gameWin(one, two, three) {
+    $('.fa').fadeOut('slow');
+    function fadeOne() {
+        one.find('.fa').fadeIn('slow');
+    }
+    function fadeTwo() {
+        two.find('.fa').fadeIn('slow')
+    }
+
+    function fadeThree() {
+        three.find('.fa').fadeIn('slow')
+    }
+
+    displayWinningTurnIndicator(one);
+    setTimeout(fadeOne, 200);
+    setTimeout(fadeTwo, 800);
+    setTimeout(fadeThree, 1200);
+    function fadeAll() {
+        $('.fa').fadeIn('slow');
+    }
+
+    setTimeout(fadeAll, 2000);
+
+    $('.square').unbind('click');
+    return true;
+}
+
+function displayWinningTurnIndicator(a) {
+    xDiv.fadeOut('fast');
+    oDiv.fadeOut('fast');
     if (a.data('value') === "X") {
-        $('.targetX').fadeIn('slow')
+        xDiv.fadeIn('slow')
     } else {
-        $('.targetO').fadeIn('slow')
+        oDiv.fadeIn('slow')
     }
 }
-
-
-
 // Horizontal Wins
 
-// create a filter that gets all of the values of a row
-
-// inARow(grid[1][1], grid[2][1], grid[3][1])
 
 function horWin() {
     return inARow(grid[1][1], grid[1][2], grid[1][3]) ||
-    inARow(grid[2][1], grid[2][2], grid[2][3]) ||
-    inARow(grid[3][1], grid[3][2], grid[3][3])
+        inARow(grid[2][1], grid[2][2], grid[2][3]) ||
+        inARow(grid[3][1], grid[3][2], grid[3][3])
 }
 
 function vertWin() {
     return inARow(grid[1][1], grid[2][1], grid[3][1]) ||
-    inARow(grid[1][2], grid[2][2], grid[3][2]) ||
-    inARow(grid[1][3], grid[2][3], grid[3][3])
+        inARow(grid[1][2], grid[2][2], grid[3][2]) ||
+        inARow(grid[1][3], grid[2][3], grid[3][3])
 }
 
 function diags() {

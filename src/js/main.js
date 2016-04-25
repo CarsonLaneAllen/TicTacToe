@@ -19,7 +19,7 @@ var turn;
 var letter, klass;
 var all;
 
-$(init);
+$(document).ready(init);
 
 function init() {
     for (i = 1; i < 4; i++) {
@@ -115,10 +115,11 @@ function reset() {
 
 
 function inARow(one, two, three) {
-    var winDivs = [one.data('value'), two.data('value'), three.data('value')];
-    var sequence = winDivs.join();
-    var threeX = sequence === 'XXX';
-    var threeO = sequence === 'OOO';
+    var winDivs = [one, two, three];
+    var winLetters = [one.data('value'), two.data('value'), three.data('value')];
+    var sequence = winLetters.join("");
+    var threeX = (sequence === 'XXX');
+    var threeO = (sequence === 'OOO');
 
     if (threeX) return winDivs;
     else if (threeO) return winDivs.reverse();
@@ -138,7 +139,7 @@ function gameWin(winDivs) {
         winDivs[2].find('.fa').fadeIn('slow')
     }
 
-    displayWinningTurnIndicator(winDivs[0]);
+    displayWinningTurnIndicator(winDivs[0].data('value'));
     setTimeout(fadeOne, 200);
     setTimeout(fadeTwo, 800);
     setTimeout(fadeThree, 1200);
@@ -155,7 +156,7 @@ function gameWin(winDivs) {
 function displayWinningTurnIndicator(a) {
     xDiv.fadeOut('fast');
     oDiv.fadeOut('fast');
-    if (a.data('value') === "X") {
+    if (a === "X") {
         xDiv.fadeIn('slow')
     } else {
         oDiv.fadeIn('slow')

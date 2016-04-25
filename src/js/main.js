@@ -79,7 +79,7 @@ function clickHandler() {
         console.log(getWin());
 
         if (!getWin()) switchTurn();
-        else (gameWin(getWin().join()))
+        else (gameWin(getWin()))
 
     })
 }
@@ -113,6 +113,7 @@ function reset() {
 // Create a function that checks for a win
 
 
+
 function inARow(one, two, three) {
     var winDivs = [one.data('value'), two.data('value'), three.data('value')];
     var sequence = winDivs.join();
@@ -124,20 +125,20 @@ function inARow(one, two, three) {
     else return false
 }
 
-function gameWin(one, two, three) {
+function gameWin(winDivs) {
     $('.fa').fadeOut('slow');
     function fadeOne() {
-        one.find('.fa').fadeIn('slow');
+        winDivs[0].find('.fa').fadeIn('slow');
     }
     function fadeTwo() {
-        two.find('.fa').fadeIn('slow')
+        winDivs[1].find('.fa').fadeIn('slow')
     }
 
     function fadeThree() {
-        three.find('.fa').fadeIn('slow')
+        winDivs[2].find('.fa').fadeIn('slow')
     }
 
-    displayWinningTurnIndicator(one);
+    displayWinningTurnIndicator(winDivs[0]);
     setTimeout(fadeOne, 200);
     setTimeout(fadeTwo, 800);
     setTimeout(fadeThree, 1200);

@@ -52,6 +52,7 @@ var startGame = function () {
 
 function switchTurn() {
     getDiv().fadeToggle('slow');
+    getOtherDiv().fadeOut('slow');
     letter = getSymbol();
     klass = getIconClass();
     turn = !turn;
@@ -67,6 +68,10 @@ function getIconClass() {
 
 function getDiv() {
     return turn ? oDiv : xDiv
+}
+
+function getOtherDiv() {
+    return !turn ? oDiv : xDiv
 }
 
 function clickHandler() {

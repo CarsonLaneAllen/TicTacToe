@@ -4,7 +4,8 @@
  declare a new array that is a matrix with the numbers and classnames of each space on the board
  */
 
-var grid = [[], [""], [""], [""]];
+var grid = [[], [''], [''], ['']];
+
 
 
 $.fn.child = function (s) {
@@ -24,11 +25,12 @@ $(document).ready(init);
 function init() {
     for (i = 1; i < 4; i++) {
         for (j = 1; j < 4; j++) {
-            var spaceClass = (i + "-" + j);
+            var spaceClass = (i + '-' + j);
             var jqueryArray = ($('#' + spaceClass));
             grid[(i)].push(jqueryArray);
         }
     }
+    getLeaderBoard();
 }
 
 // When 'Begin' is clicked, set turn to true or false, then activate the corresponding funci
@@ -59,11 +61,11 @@ function switchTurn() {
 }
 
 function getSymbol() {
-    return turn ? "O" : "X"
+    return turn ? 'O' : 'X'
 }
 
 function getIconClass() {
-    return turn ? "fa fa-5x fa-circle-o" : "fa fa-5x fa-times"
+    return turn ? 'fa fa-5x fa-circle-o' : 'fa fa-5x fa-times'
 }
 
 function getDiv() {
@@ -90,7 +92,7 @@ function clickHandler() {
 }
 
 function isEmpty(square) {
-    return $(square).data('value') === "";
+    return $(square).data('value') === '';
 }
 
 function storeMove(square) {
@@ -122,7 +124,7 @@ function reset() {
 function inARow(one, two, three) {
     var winDivs = [one, two, three];
     var winLetters = [one.data('value'), two.data('value'), three.data('value')];
-    var sequence = winLetters.join("");
+    var sequence = winLetters.join('');
     var threeX = (sequence === 'XXX');
     var threeO = (sequence === 'OOO');
 
@@ -132,6 +134,7 @@ function inARow(one, two, three) {
 }
 
 function gameWin(winDivs) {
+    setStorage(winDivs[0].data('value'));
     $('.fa').fadeOut('slow');
     function fadeOne() {
         winDivs[0].find('.fa').fadeIn('slow');
@@ -161,7 +164,7 @@ function gameWin(winDivs) {
 function displayWinningTurnIndicator(a) {
     xDiv.fadeOut('fast');
     oDiv.fadeOut('fast');
-    if (a === "X") {
+    if (a === 'X') {
         xDiv.fadeIn('slow')
     } else {
         oDiv.fadeIn('slow')
@@ -187,5 +190,142 @@ function diags() {
         inARow(grid[1][3], grid[2][2], grid[3][1])
 }
 
+
+
+
+function potentialWin(one, two, three) {
+
+    var leftWin = [one, two];
+    var rightWin = [two, three];
+    var centerWin = [one, three];
+    var all = [leftWin, rightWin, centerWin];
+    for (i = 0; i < 3; i++) {
+        if (returnIfSame(all[i])) {
+            all[i] = returnIfSame(all[i]);
+        }
+    }
+
+    return all
+
+}
+
+function returnIfSame(array) {
+    if (array[0].data('value') === array[1].data('value') && array[1].data('value') !== '') {
+        return array
+    } else {
+        return false
+    }
+}
+
+function potentialHor() {
+    return [potentialWin(grid[1][1], grid[1][2], grid[1][3]),
+        potentialWin(grid[2][1], grid[2][2], grid[2][3]),
+        potentialWin(grid[3][1], grid[3][2], grid[3][3])]
+}
+
+var winnerHtml;
+
+var xImg = "<img id='o' src='skull.png' width='100%' height='100%'>";
+var oImg = "<img id='o' src='XSkullFrame.png' width='100%' height='100%'>";
+
+
+// Get the number of rounds that have been played in this session
+
+var roundIterator = sessionStorage.length;
+
+// Add winner & round to the session storage
+
+function setStorage(winner) {
+    roundIterator++;
+    sessionStorage.setItem(roundIterator, winner);
+
+    // Display the winner at the top of the page
+
+    if (sessionStorage.getItem(roundIterator) === "X"){
+        winnerHtml = xImg;
+        appendWinner();
+    } else {
+        winnerHtml = oImg;
+        appendWinner();
+    }
+
+    // Update the Leaderboard
+
+    getLeaderBoard();
+}
+
+
+function getLeaderBoard() {
+    var xWins = 0;
+    var oWins = 0;
+    for (i = 1; i <= sessionStorage.length; i++) {
+        if (sessionStorage.getItem(i) === "X") {
+            xWins++;
+            $('#xWins').text(xWins);
+        } else {
+            oWins++;
+            $('#oWins').text(oWins);
+        }
+    }
+
+}
+
+function appendWinner() {
+    $('#round').fadeIn('slow');
+    $('#victor').fadeIn('slow');
+    $('#leaderboard').append(winnerRow());
+    var arr = $('#leaderboard').child();
+    $(arr).last().fadeIn('slow');
+    $(arr).last().fadeIn('slow')
+
+}
+
+var winnerRow = function() {
+    return $("\
+        <div style='display: none;'class='container'>\
+        <div class='row vertical' align='center'>\
+        <div class='col-md-3'>\
+        </div>\
+        <div class='topsquare col-md-2 text-md-center'>\
+        <h3>"
+        + roundIterator +
+        "<div>\
+        </div>\
+        </div>\
+        <div class='click topsquare hover col-md-2 text-md-center'>\
+        <div style='display: inline'>\
+        </div>\
+        </div>\
+        <div class='topsquare col-md-2 text-md-center'>"
+            + winnerHtml +
+        "<div>\
+        </div>\
+        </div>\
+        <div class='col-md-3'></div>\
+        </div>\
+        </div>\
+    ");
+};
+
+var winerRow = function() {
+    return $(
+        "<div id='r1' class='row vertical' align='center'> \
+            <div class='col-md-4'>\
+            </div>\
+            <div id='1-1' class='square winleft hover col-md-2 text-md-center game' data-value=''>\
+            <div style='display: inline'>\
+                <h2>"
+        + roundIterator +
+        "</h2>\
+        </div>\
+    </div>\
+    <div id='1-3' class='square winright hover col-md-2 text-md-center game' data-value=''>"
+        + winnerHtml +
+        "</div>\
+        <div class='col-md-4'>\
+        </div>\
+    </div>"
+    );
+};
 
 

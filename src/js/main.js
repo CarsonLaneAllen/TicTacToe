@@ -262,31 +262,25 @@ var leaderboard;
 var xWins;
 var oWins;
 
+firebaseRef.once('value', function (snapshot) {
+    xWins = snapshot.val().wins.xWins;
+    oWins = snapshot.val().wins.oWins;
+});
+
 firebaseRef.on("value", function(snapshot) {
         roundIterator = snapshot.val().leaderboard.length;
         leaderboard = snapshot.val().leaderboard;
-        xWins = snapshot.val().wins.xWins;
-        oWins = snapshot.val().wins.oWins;
         getLeaderBoard();
 }, function (errorObject) {
     console.log("The read failed: " + errorObject.code);
 });
 
-function updateStorage() {
-    scoreRef.set(leaderboard);
-    winsRef.set({
-        "xWins": xWins,
-        "oWins": oWins
-    })
-}
 
 
 
 
 function setStorage(winner) {
     leaderboard.push(winner);
-
-
 
     // Display the winner at the top of the page
 
@@ -310,6 +304,15 @@ function setStorage(winner) {
 
     getLeaderBoard();
 }
+
+function updateStorage() {
+    scoreRef.set(leaderboard);
+    winsRef.set({
+        "xWins": xWins,
+        "oWins": oWins
+    })
+}
+
 
 
 function getLeaderBoard() {

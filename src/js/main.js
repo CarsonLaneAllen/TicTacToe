@@ -6,6 +6,31 @@
 
 var grid = [[], [''], [''], ['']];
 
+var firebaseRef = new Firebase("https://blistering-fire-8275.firebaseio.com/");
+
+var usersRef = firebaseRef.child("users");
+
+var scoreRef = firebaseRef.child('leaderboard');
+
+var winsRef = firebaseRef.child('wins');
+
+
+
+
+
+usersRef.set({
+    alanisawesome: {
+        date_of_birth: "June 23, 1912",
+        full_name: "Alan Turing"
+    },
+    gracehop: {
+        date_of_birth: "December 9, 1906",
+        full_name: "Grace Hopper"
+    },
+    grahamIsTheBeast: {
+        date_of_birth: 'June 22, 1994'
+    }
+});
 
 
 $.fn.child = function (s) {
@@ -30,7 +55,6 @@ function init() {
             grid[(i)].push(jqueryArray);
         }
     }
-    getLeaderBoard();
 }
 
 // When 'Begin' is clicked, set turn to true or false, then activate the corresponding funci
@@ -223,6 +247,140 @@ function potentialHor() {
         potentialWin(grid[3][1], grid[3][2], grid[3][3])]
 }
 
+// using Firebase
+
+var winnerHtml;
+
+var xImg = "<img id='o' src='skull.png' width='100%' height='100%'>";
+var oImg = "<img id='o' src='XSkullFrame.png' width='100%' height='100%'>";
+
+
+// Get the number of rounds that have been played in this session
+
+var roundIterator;
+var leaderboard;
+var xWins;
+var oWins;
+
+firebaseRef.on("value", function(snapshot) {
+        roundIterator = snapshot.val().leaderboard.length;
+        leaderboard = snapshot.val().leaderboard;
+        xWins = snapshot.val().wins.xWins;
+        oWins = snapshot.val().wins.oWins;
+        getLeaderBoard();
+}, function (errorObject) {
+    console.log("The read failed: " + errorObject.code);
+});
+
+function updateStorage() {
+    scoreRef.set(leaderboard);
+    winsRef.set({
+        "xWins": xWins,
+        "oWins": oWins
+    })
+}
+
+
+
+
+function setStorage(winner) {
+    leaderboard.push(winner);
+
+
+
+    // Display the winner at the top of the page
+
+    if (leaderboard[leaderboard.length - 1] === "X"){
+        winnerHtml = xImg;
+        ++xWins;
+        xWins = xWins;
+        console.log(xWins);
+        appendWinner();
+    } else {
+        winnerHtml = oImg;
+        ++oWins;
+        oWins = oWins;
+        console.log(oWins);
+        appendWinner();
+    }
+
+    updateStorage();
+
+    // Update the Leaderboard
+
+    getLeaderBoard();
+}
+
+
+function getLeaderBoard() {
+        console.log(xWins);
+        $('#xWins').text(xWins);
+        $('#oWins').text(oWins);
+}
+
+function appendWinner() {
+    $('#round').fadeIn('slow');
+    $('#victor').fadeIn('slow');
+    $('#leaderboard').append(winnerRow());
+    var arr = $('#leaderboard').child();
+    $(arr).last().fadeIn('slow');
+    $(arr).last().fadeIn('slow')
+
+}
+
+
+var winnerRow = function() {
+    return $("\
+        <div style='display: none;'class='container'>\
+        <div class='row vertical' align='center'>\
+        <div class='col-md-3'>\
+        </div>\
+        <div class='topsquare col-md-2 text-md-center'>\
+        <h3>"
+        + roundIterator +
+        "<div>\
+        </div>\
+        </div>\
+        <div class='click topsquare hover col-md-2 text-md-center'>\
+        <div style='display: inline'>\
+        </div>\
+        </div>\
+        <div class='topsquare col-md-2 text-md-center'>"
+        + winnerHtml +
+        "<div>\
+        </div>\
+        </div>\
+        <div class='col-md-3'></div>\
+        </div>\
+        </div>\
+    ");
+};
+
+var winerRow = function() {
+    return $(
+        "<div id='r1' class='row vertical' align='center'> \
+            <div class='col-md-4'>\
+            </div>\
+            <div id='1-1' class='square winleft hover col-md-2 text-md-center game' data-value=''>\
+            <div style='display: inline'>\
+                <h2>"
+        + roundIterator +
+        "</h2>\
+        </div>\
+    </div>\
+    <div id='1-3' class='square winright hover col-md-2 text-md-center game' data-value=''>"
+        + winnerHtml +
+        "</div>\
+        <div class='col-md-4'>\
+        </div>\
+    </div>"
+    );
+};
+
+// using sessionStorage
+
+/*
+
 var winnerHtml;
 
 var xImg = "<img id='o' src='skull.png' width='100%' height='100%'>";
@@ -280,52 +438,6 @@ function appendWinner() {
 
 }
 
-var winnerRow = function() {
-    return $("\
-        <div style='display: none;'class='container'>\
-        <div class='row vertical' align='center'>\
-        <div class='col-md-3'>\
-        </div>\
-        <div class='topsquare col-md-2 text-md-center'>\
-        <h3>"
-        + roundIterator +
-        "<div>\
-        </div>\
-        </div>\
-        <div class='click topsquare hover col-md-2 text-md-center'>\
-        <div style='display: inline'>\
-        </div>\
-        </div>\
-        <div class='topsquare col-md-2 text-md-center'>"
-            + winnerHtml +
-        "<div>\
-        </div>\
-        </div>\
-        <div class='col-md-3'></div>\
-        </div>\
-        </div>\
-    ");
-};
 
-var winerRow = function() {
-    return $(
-        "<div id='r1' class='row vertical' align='center'> \
-            <div class='col-md-4'>\
-            </div>\
-            <div id='1-1' class='square winleft hover col-md-2 text-md-center game' data-value=''>\
-            <div style='display: inline'>\
-                <h2>"
-        + roundIterator +
-        "</h2>\
-        </div>\
-    </div>\
-    <div id='1-3' class='square winright hover col-md-2 text-md-center game' data-value=''>"
-        + winnerHtml +
-        "</div>\
-        <div class='col-md-4'>\
-        </div>\
-    </div>"
-    );
-};
-
+*/
 

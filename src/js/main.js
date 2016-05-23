@@ -265,6 +265,7 @@ var oWins;
 firebaseRef.once('value', function (snapshot) {
     xWins = snapshot.val().wins.xWins;
     oWins = snapshot.val().wins.oWins;
+    getLeaderBoard();
 });
 
 firebaseRef.on("value", function(snapshot) {
